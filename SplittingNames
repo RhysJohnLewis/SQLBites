@@ -1,0 +1,11 @@
+-- Split one FULLNAME column into FIRST, MIDDLE and LAST
+
+Select Ltrim(SubString(Fullname,1,Isnull(Nullif(CHARINDEX(' ',Fullname),0),1000))) As FirstName,
+Ltrim(SUBSTRING(Fullname,CharIndex(' ',Fullname),
+Case When (CHARINDEX(' ',Fullname,CHARINDEX(' ',Fullname)+1)-CHARINDEX(' ',Fullname))<=0 then 0 
+else CHARINDEX(' ',Fullname,CHARINDEX(' ',Fullname)+1)-CHARINDEX(' ',Fullname) end )) as MiddleName,
+Ltrim(SUBSTRING(Fullname,Isnull(Nullif(CHARINDEX(' ',Fullname,Charindex(' ',Fullname)+1),0),CHARINDEX(' ',Fullname)),
+Case when Charindex(' ',Fullname)=0 then 0 else LEN(Fullname) end)) as LastName,
+UNIQUEID
+into #TEMPTABLENAME
+from TABLENAME
